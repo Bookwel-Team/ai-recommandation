@@ -1,0 +1,7 @@
+.venv
+.env
+venv/
+env/
+
+.idea
+ai_recommandation/settings.py
