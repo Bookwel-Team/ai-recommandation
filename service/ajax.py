@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 @require_POST
-def get_recommendations(request, user_id):
+def get_recommendations(request):
     try:
         request_body = request.body.decode('utf-8')
         data = json.loads(request_body)
