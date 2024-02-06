@@ -1,4 +1,6 @@
 import json
+
+import PyPDF2
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -37,3 +39,23 @@ def get_recommendations(request):
 
     except json.JSONDecodeError as e:
         return JsonResponse({"error": f"Invalid JSON in request body: {e}"}, status=400)
+
+
+def extract_info_from_pdf(pdf_file_path):
+    try:
+        with open(pdf_file_path, 'rb') as file:
+            pdf_reader = PyPDF2.PdfFileReader(file)
+
+            first_page = pdf_reader.getPage(0)
+            text = first_page.extractText()
+
+            title_index = text.find('Title:')
+            author_index = text.find('Author:')
+
+            title = text[title_index + 6:author_index].strip() if title_index != -1 else None
+            author = text[author_index + 7:].strip() if author_index != -1 else None
+
+            return {"title": title, "author": author}
+
+    except Exception as e:
+        return {"error": f"Error extracting information from PDF: {e}"}
