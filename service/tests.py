@@ -1,3 +1,5 @@
+import base64
+
 from django.test import TestCase, Client
 import json
 
@@ -52,3 +54,26 @@ class RecommendationsTestCase(TestCase):
 
         self.assertIn('recommendations', response_data)
 
+
+class PdfInfoExtractionTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_extract_info_from_pdf(self):
+        sample_pdf_content = base64.b64encode(b"Sample PDF content").decode('utf-8')
+
+        json_payload = {
+            "pdf_content": sample_pdf_content
+        }
+
+        request_body = json.dumps(json_payload)
+
+        endpoint_url = reverse('extract_info_from_pdf')
+        response = self.client.post(endpoint_url, data=request_body, content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content)
+
+        self.assertIn('title', response_data)
+        self.assertIn('author', response_data)
