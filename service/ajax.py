@@ -1,9 +1,12 @@
+import base64
 import json
 
-import PyPDF2
+import io
+
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from fitz import fitz
 
 
 @csrf_exempt
@@ -51,21 +54,24 @@ def get_recommendations(request):
         return JsonResponse({"error": f"Invalid JSON in request body: {e}"}, status=400)
 
 
-def extract_info_from_pdf(pdf_file_path):
+@require_POST
+def extract_info_from_pdf(request):
     try:
-        with open(pdf_file_path, 'rb') as file:
-            pdf_reader = PyPDF2.PdfFileReader(file)
+        request_body = request.body.decode('utf-8')
+        data = json.loads(request_body)
 
-            first_page = pdf_reader.getPage(0)
-            text = first_page.extractText()
+        pdf_content = data.get('pdf_content', None)
 
-            title_index = text.find('Title:')
-            author_index = text.find('Author:')
+        if pdf_content:
+            pdf_file = io.BytesIO(base64.b64decode(pdf_content))
 
-            title = text[title_index + 6:author_index].strip() if title_index != -1 else None
-            author = text[author_index + 7:].strip() if author_index != -1 else None
+            with fitz.open(pdf_file) as pdf_document:
+                metadata = pdf_document.metadata
 
-            return {"title": title, "author": author}
+                title = metadata.get('title', None)
+                author = metadata.get('author', None)
+
+                return {"title": title, "author": author}
 
     except Exception as e:
         return {"error": f"Error extracting information from PDF: {e}"}
