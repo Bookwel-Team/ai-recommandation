@@ -13,13 +13,18 @@ def get_recommendations(request):
         request_body = request.body.decode('utf-8')
         data = json.loads(request_body)
 
-        user_books = data.get('user_books', [])
-        books = data.get('books', [])
+        user_books = data.get('books', [])
+        all_books = data.get('all_books', [])
         recommendations = []
 
         for user_book in user_books:
-            category = user_book.get('category')
-            author = user_book.get('author')
+            user_category = user_book.get('category', {})
+            user_author = user_book.get('author', '')
+            user_reactions = user_book.get('user_reaction', '')
+            user_id = user_book.get('user_id', '')
+
+            liked_books = [ub for ub in all_books if ub.get('user_id') == user_id and 'LIKE' in user_reactions]
+            disliked_books = [ub for ub in all_books if ub.get('user_id') == user_id and 'DISLIKE' in user_reactions]
 
             similar_books = [
                 {
@@ -29,8 +34,13 @@ def get_recommendations(request):
                     "category": book.get("category"),
                     "file_link": book.get("file_link"),
                 }
-                for book in books
-                if book.get('category') == category and book.get('author') == author
+                for book in all_books
+                if (
+                        book.get('category', {}).get('id') == user_category.get('id') or
+                        book.get('author', "") == user_author and
+                        book in liked_books and
+                        book not in disliked_books
+                )
             ]
 
             recommendations.extend(similar_books)
