@@ -13,10 +13,16 @@ class RecommendationsTestCase(TestCase):
     def test_get_recommendations(self):
         user_books = [
             {
-                "category": {"id": "1"},
+                "category": {"id": "5"},
                 "author": "John Doe",
-                "user_reaction": "LIKE",
+                "user_reaction": "DISLIKE",
                 "user_id": "123",
+            },
+            {
+                "category": {"id": "1"},
+                "author": "John Peters",
+                "user_reaction": "LIKE",
+                "user_id": "127",
             }
         ]
         all_books = [
@@ -33,6 +39,20 @@ class RecommendationsTestCase(TestCase):
                 "author": "Jane Smith",
                 "category": {"id": "2"},
                 "file_link": "link2",
+            },
+            {
+                "id": "3",
+                "title": "Book 3",
+                "author": "John Peters",
+                "category": {"id": "1"},
+                "file_link": "link1",
+            },
+            {
+                "id": "4",
+                "title": "Book 4",
+                "author": "Park Doe",
+                "category": {"id": "5"},
+                "file_link": "link1",
             },
         ]
 
