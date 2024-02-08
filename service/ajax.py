@@ -11,20 +11,16 @@ def get_recommendations(request):
         request_body = request.body.decode('utf-8')
         data = json.loads(request_body)
 
-        user_books = data.get('user_books', [])
-        all_books = data.get('books', [])
+        user_books = data.get('books', [])
+        all_books = data.get('all_books', [])
         recommendations = []
 
         for user_book in user_books:
             user_category = user_book.get('category', {})
-            user_author = user_book.get('author', '')
             user_reactions = user_book.get('user_reaction', '')
-            user_id = user_book.get('user_id', '')
 
-            # liked_books = [ub for ub in all_books if ub.get('user_id') == user_id and 'LIKE' in user_reactions]
-            liked_books = filter(lambda ub: ub.get('user_id') == user_id and 'LIKE' in user_reactions, all_books)
-            # disliked_books = [ub for ub in all_books if ub.get('user_id') == user_id and 'DISLIKE' in user_reactions]
-            disliked_books = filter(lambda ub: ub.get('user_id') == user_id and 'LIKE' in user_reactions, all_books)
+            liked_books = list(filter(lambda ub: 'LIKE' in user_reactions, all_books))
+            disliked_books = list(filter(lambda ub: 'DISLIKE' in user_reactions, all_books))
 
             similar_books = [
                 {
@@ -36,10 +32,9 @@ def get_recommendations(request):
                 }
                 for book in all_books
                 if (
-                        book in liked_books and
                         book not in disliked_books and
-                        book.get('category', {}).get('id') == user_category.get('id') or
-                        book.get('author', "") == user_author
+                        book in liked_books and
+                        book.get('category', {}).get('id') == user_category.get('id')
                 )
             ]
 
