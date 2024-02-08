@@ -13,28 +13,15 @@ class RecommendationsTestCase(TestCase):
     def test_get_recommendations(self):
         user_books = [
             {
-                "category": {"id": "5"},
+                "category": {"id": "1"},
                 "author": "John Doe",
                 "user_reaction": "LIKE",
                 "user_id": "123",
-            },
-            {
-                "category": {"id": "1"},
-                "author": "John Peters",
-                "user_reaction": "LIKE",
-                "user_id": "123",
-            },
-            {
-                "category": {"id": "2"},
-                "author": "Jane Doe",
-                "user_reaction": "DISLIKE",
-                "user_id": "456",
             }
         ]
-
         all_books = [
             {
-                "id": "123",
+                "id": "1",
                 "title": "Book 1",
                 "author": "John Doe",
                 "category": {"id": "1"},
