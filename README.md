@@ -44,13 +44,13 @@ To get started with the Book Recommendation App, follow the steps below.
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/book-recommendation-app.git
+    git clone https://github.com/your-username/ai-recommendation.git
     ```
 
 2. Change into the project directory:
 
     ```bash
-    cd book-recommendation-app
+    cd ai-recommendation
     ```
 
 3. Install dependencies:
@@ -77,7 +77,7 @@ To get started with the Book Recommendation App, follow the steps below.
 3. Run the development server:
 
     ```bash
-    python manage.py runserver
+    python manage.py runserver 0.0.0.0:8000
     ```
 
 4. Access the admin panel at `http://127.0.0.1:8000/admin/` to manage books.
