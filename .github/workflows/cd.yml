@@ -29,9 +29,9 @@ jobs:
           chmod 600 ~/.ssh/private_key.pem
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/private_key.pem ubuntu@${{ secrets.INSTANCE_IP }} "\
             rm -rf ./ai-recommandation \
-            git clone https://onitsiky:\${{ secrets.GH_ACCESS_TOKEN }}@github.com/Bookwel-Team/ai-recommandation.git
+            git clone https://onitsiky:${{ secrets.GH_ACCESS_TOKEN }}@github.com/Bookwel-Team/ai-recommandation.git \
             cd ./ai-recommandation \
             pip install -r requirement.txt \
-            chmod +x kill_actual_server.sh
-            ./kill_actual_server.sh
+            chmod +x kill_actual_server.sh \
+            ./kill_actual_server.sh \
             nohup python manage.py runserver 0.0.0.0:8000 &"
