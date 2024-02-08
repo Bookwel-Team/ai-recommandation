@@ -12,12 +12,10 @@ def get_recommendations(request):
         data = json.loads(request_body)
 
         user_books = data.get('user_books', [])
-        books = data.get('books', [])
+        all_books = data.get('books', [])
         recommendations = []
 
         for user_book in user_books:
-            category = user_book.get('category')
-            author = user_book.get('author')
             user_category = user_book.get('category', {})
             user_author = user_book.get('author', '')
             user_reactions = user_book.get('user_reaction', '')
@@ -36,7 +34,7 @@ def get_recommendations(request):
                     "category": book.get("category"),
                     "file_link": book.get("file_link"),
                 }
-                for book in books
+                for book in all_books
                 if (
                         book in liked_books and
                         book not in disliked_books and
