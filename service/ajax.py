@@ -21,7 +21,7 @@ def get_recommendations(request):
 
         for user_book in user_books:
             user_category = user_book.get('category', {})
-            user_reactions = user_book.get('user_reaction', '')
+            user_reactions = user_book.get('userReaction', '')
 
             liked_books = list(filter(lambda ub: 'LIKE' in user_reactions, all_books))
             disliked_books = list(filter(lambda ub: 'DISLIKE' in user_reactions, all_books))
@@ -32,7 +32,7 @@ def get_recommendations(request):
                     "title": book.get("title"),
                     "author": book.get("author"),
                     "category": book.get("category"),
-                    "file_link": book.get("file_link"),
+                    "filename": book.get("filename"),
                 }
                 for book in all_books
                 if (

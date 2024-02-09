@@ -13,10 +13,16 @@ class RecommendationsTestCase(TestCase):
     def test_get_recommendations(self):
         user_books = [
             {
-                "category": {"id": "1"},
+                "id": "1",
+                "title": "Book 1",
                 "author": "John Doe",
-                "user_reaction": "LIKE",
-                "user_id": "123",
+                "category": {
+                    "id": "1",
+                    "name": "aventure"
+                },
+                "filename": "link1",
+                "userReaction": "LIKE",
+                "userId": "123",
             }
         ]
         all_books = [
@@ -24,44 +30,30 @@ class RecommendationsTestCase(TestCase):
                 "id": "1",
                 "title": "Book 1",
                 "author": "John Doe",
-                "category": {"id": "1"},
-                "file_link": "link1",
+                "category": {
+                    "id": "1",
+                },
+                "filename": "link1",
             },
             {
                 "id": "2",
                 "title": "Book 2",
-                "author": "Jane Smith",
-                "category": {"id": "2"},
-                "file_link": "link2",
+                "author": "John Peters",
+                "category": {
+                    "id": "8",
+                },
+                "filename": "link1",
             },
             {
                 "id": "456",
                 "title": "Book 3",
-                "author": "John Peters",
-                "category": {"id": "1"},
-                "file_link": "link1",
-            },
-            {
-                "id": "4",
-                "title": "Book 4",
-                "author": "Park Doe",
-                "category": {"id": "5"},
-                "file_link": "link1",
-            },
-            {
-                "id": "5",
-                "title": "Book 5",
-                "author": "Jane Doe",
-                "category": {"id": "2"},
-                "file_link": "link3",
-            },
-            {
-                "id": "456",
-                "title": "Book 6",
-                "author": "John Doe",
-                "category": {"id": "5"},
-                "file_link": "link4",
-            },
+                "author": "Peters P",
+                "category": {
+                    "id": "3",
+                    "name": "aventure"
+                },
+                "filename": "link1",
+            }
         ]
 
         payload = {
