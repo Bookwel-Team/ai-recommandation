@@ -75,8 +75,8 @@ def extract_info_from_pdf(request):
     pdf_content = request.FILES.get('pdf-content')
     reader = pdf_content.read()
     meta = reader.metadata
-    author = meta.get('author')
-    title = meta.get('title')
+    author = meta.get('Author')
+    title = meta.get('Title')
 
     try:
         if pdf_content:
