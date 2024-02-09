@@ -1,8 +1,9 @@
-import base64
 import io
 import json
 
-import fitz
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument
+
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -17,15 +18,22 @@ def get_recommendations(request):
 
         user_books = data.get('books', [])
         all_books = data.get('all_books', [])
+        user_categories = data.get('user_categories', [])
+
         recommendations = []
+
+        liked_categories = list(
+            map(lambda cat: cat['id'], filter(lambda cat: cat.get('userReaction') == 'LIKE', user_categories)))
+        disliked_categories = list(
+            map(lambda cat: cat['id'], filter(lambda cat: cat.get('userReaction') == 'DISLIKE', user_categories)))
 
         for user_book in user_books:
             book_author = user_book.get('author', '')
             user_category = user_book.get('category', {})
-            user_reactions = user_book.get('userReaction', '')
+            user_reaction = user_book.get('userReaction', '')
 
-            liked_books = list(filter(lambda ub: 'LIKE' in user_reactions, all_books))
-            disliked_books = list(filter(lambda ub: 'DISLIKE' in user_reactions, all_books))
+            liked_books = list(filter(lambda ub: 'LIKE' in user_reaction, all_books))
+            disliked_books = list(filter(lambda ub: 'DISLIKE' in user_reaction, all_books))
 
             similar_books = [
                 {
@@ -39,6 +47,8 @@ def get_recommendations(request):
                 if (
                     book not in disliked_books
                     and book in liked_books
+                    and book.get("category", {}).get("id") not in disliked_categories
+                    and book.get("category", {}).get("id") in liked_categories
                     and (
                         book.get('category', {}).get('id') == user_category.get('id')
                         or book.get('author') == book_author
@@ -46,7 +56,15 @@ def get_recommendations(request):
                 )
             ]
 
+            disliked_liked_books = [
+                book for book in disliked_books
+                if book.get('author') == book_author and book.get('category', {}).get('id') not in disliked_categories
+            ]
+
             recommendations.extend(similar_books)
+
+            if disliked_liked_books:
+                recommendations.extend(disliked_liked_books)
 
         return JsonResponse({"recommendations": recommendations})
 
@@ -57,22 +75,16 @@ def get_recommendations(request):
 @csrf_exempt
 @require_POST
 def extract_info_from_pdf(request):
+    pdf_content = request.FILES.get('pdf-content')
+    reader = pdf_content.read()
+    meta = reader.metadata
+    author = meta.get('author')
+    title = meta.get('title')
+
     try:
-        request_body = request.body.decode('utf-8')
-        data = json.loads(request_body)
-
-        pdf_content = data.get('pdf_content', None)
-
         if pdf_content:
-            pdf_file = io.BytesIO(base64.b64decode(pdf_content))
-
-            with fitz.open(pdf_file) as pdf_document:
-                metadata = pdf_document.metadata
-
-                title = metadata.get('title', None)
-                author = metadata.get('author', None)
-
+            with pdf_content:
                 return JsonResponse({"title": title, "author": author})
 
     except Exception as e:
-        return HttpResponseBadRequest(f"Error extracting information from PDF: {e}")
+        return JsonResponse({"error": str(e)}, status=400)
