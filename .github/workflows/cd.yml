@@ -1,0 +1,37 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - 'dev'
+      - 'prod'
+      - 'preprod'
+
+  workflow_dispatch:
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Setup SSH connection
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.INSTANCE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Create .pem file
+        run: openssl rsa -in ~/.ssh/id_rsa -outform pem > ~/.ssh/private_key.pem
+
+      - name: Deploy api
+        run: |
+          chmod 600 ~/.ssh/private_key.pem
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/private_key.pem ubuntu@${{ secrets.INSTANCE_IP }} "\
+            rm -rf ./ai-recommandation \
+            git clone https://onitsiky:${{ secrets.GH_ACCESS_TOKEN }}@github.com/Bookwel-Team/ai-recommandation.git \
+            cd ./ai-recommandation \
+            pip install -r requirement.txt \
+            chmod +x kill_actual_server.sh \
+            ./kill_actual_server.sh \
+            nohup python manage.py runserver 0.0.0.0:8000 &"
