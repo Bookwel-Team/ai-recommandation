@@ -20,6 +20,7 @@ def get_recommendations(request):
         recommendations = []
 
         for user_book in user_books:
+            book_author = user_book.get('author', '')
             user_category = user_book.get('category', {})
             user_reactions = user_book.get('userReaction', '')
 
@@ -36,9 +37,12 @@ def get_recommendations(request):
                 }
                 for book in all_books
                 if (
-                        book not in disliked_books and
-                        book in liked_books and
+                    book not in disliked_books
+                    and book in liked_books
+                    and (
                         book.get('category', {}).get('id') == user_category.get('id')
+                        or book.get('author') == book_author
+                    )
                 )
             ]
 
