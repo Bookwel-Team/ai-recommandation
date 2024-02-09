@@ -3,7 +3,7 @@ import io
 import json
 
 import fitz
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 
@@ -72,7 +72,7 @@ def extract_info_from_pdf(request):
                 title = metadata.get('title', None)
                 author = metadata.get('author', None)
 
-                return {"title": title, "author": author}
+                return JsonResponse({"title": title, "author": author})
 
     except Exception as e:
-        return {"error": f"Error extracting information from PDF: {e}"}
+        return HttpResponseBadRequest(f"Error extracting information from PDF: {e}")
