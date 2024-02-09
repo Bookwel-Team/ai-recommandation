@@ -1,9 +1,10 @@
 import json
 
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from PyPDF2 import PdfReader
 
 
 @csrf_exempt
@@ -72,16 +73,17 @@ def get_recommendations(request):
 @csrf_exempt
 @require_POST
 def extract_info_from_pdf(request):
-    pdf_content = request.FILES.get('pdf-content')
-    reader = pdf_content.read()
-    meta = reader.metadata
-    author = meta.get('Author')
-    title = meta.get('Title')
-
     try:
+        pdf_content = request.FILES.get('pdf-content')
+
         if pdf_content:
-            with pdf_content:
-                return JsonResponse({"title": title, "author": author})
+            with pdf_content.open('rb') as file:
+                reader = PdfReader(file)
+                metadata = reader.metadata
+                author = metadata.author
+                title = metadata.title
+
+            return JsonResponse({"title": title, "author": author})
 
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return HttpResponseBadRequest({"error": str(e)}, status=400)
