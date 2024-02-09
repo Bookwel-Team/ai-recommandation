@@ -50,6 +50,7 @@ def get_recommendations(request):
         return JsonResponse({"error": f"Invalid JSON in request body: {e}"}, status=400)
 
 
+@csrf_exempt
 @require_POST
 def extract_info_from_pdf(request):
     try:
