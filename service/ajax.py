@@ -1,10 +1,7 @@
-import io
 import json
 
-from pdfminer.pdfparser import PDFParser
-from pdfminer.pdfdocument import PDFDocument
 
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 
