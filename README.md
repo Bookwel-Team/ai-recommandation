@@ -4,13 +4,11 @@ This Django application provides book recommendations for users based on their f
 
 ## Table of Contents
 - [Features](#features)
-- [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Service Package](#service-package)
-- [Contributing](#contributing)
-- [License](#license)
+- [Endpoints](#endpoints)
+- [Testing](#testing)
 
 ## Features
 
@@ -19,21 +17,6 @@ This Django application provides book recommendations for users based on their f
 - **Recommendation System:** Users receive book recommendations based on their favorite books or downloaded books.
 - **Custom Exceptions:** Handle exceptions such as Internal Server Error, Bad Request, Not Authorized, Resource Not Found, and Too Many Requests.
 
-## Project Structure
-
-ai_recommendation/
-|-- ai_recommendation/ # Django project directory
-| |-- settings.py
-| |-- ...
-|-- service/ # Separate package for recommendation logic
-| |-- models.py
-| |-- ...
-|-- requirements.txt
-|-- manage.py
-|-- ...
-
-perl
-Copy code
 
 ## Getting Started
 
@@ -61,27 +44,23 @@ To get started with the Book Recommendation App, follow the steps below.
 
 ## Usage
 
-1. Migrate the database:
-
-    ```bash
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
-
-2. Create a superuser account:
-
-    ```bash
-    python manage.py createsuperuser
-    ```
-
-3. Run the development server:
+1. Run the development server:
 
     ```bash
     python manage.py runserver 0.0.0.0:8000
     ```
+   
+## Endpoints
 
-4. Access the admin panel at `http://127.0.0.1:8000/admin/` to manage books.
+The application exposes the following endpoints:
 
-## Service Package
+- `/recommandation/recommandation/`: Endpoint for the `get_recommendations` logic.
+- `/recommandation/pdf/`: Endpoint for the `extract_info_from_pdf` logic.
 
-The recommendation logic is implemented in a separate service package (`service_package/recommendation_service.py`). This package handles the recommendation system's logic to provide users with book recommendations based on their preferences.
+## Testing
+
+Run the tests using the following command:
+
+   ```bash
+  python manage.py test service.tests
+   ```
