@@ -18,13 +18,26 @@ class RecommendationsTestCase(TestCase):
                 "author": "John Doe",
                 "category": {
                     "id": "1",
-                    "name": "aventure"
+                    "name": "adventure"
                 },
                 "filename": "link1",
-                "userReaction": "LIKE",
+                "userReaction": 'LIKE',
+                "userId": "123",
+            },
+            {
+                "id": "2",
+                "title": "Book 2",
+                "author": "Jane Doe",
+                "category": {
+                    "id": "2",
+                    "name": "mystery"
+                },
+                "filename": "link2",
+                "userReaction": 'DISLIKE',
                 "userId": "123",
             }
         ]
+
         all_books = [
             {
                 "id": "1",
@@ -32,47 +45,51 @@ class RecommendationsTestCase(TestCase):
                 "author": "John Doe",
                 "category": {
                     "id": "1",
+                    "name": "adventure"
                 },
                 "filename": "link1",
             },
             {
                 "id": "2",
                 "title": "Book 2",
-                "author": "John Peters",
+                "author": "Jane Doe",
                 "category": {
-                    "id": "8",
+                    "id": "2",
+                    "name": "mystery"
                 },
-                "filename": "link1",
+                "filename": "link2",
             },
             {
-                "id": "456",
+                "id": "3",
                 "title": "Book 3",
-                "author": "Peters P",
+                "author": "Jack Doe",
                 "category": {
                     "id": "3",
-                    "name": "aventure"
+                    "name": "romance"
                 },
-                "filename": "link1",
+                "filename": "link3",
             }
         ]
 
         payload = {
             "books": user_books,
             "all_books": all_books,
+            "user_categories": [{"id": "1", "userReaction": 'LIKE'}, {"id": "2", "userReaction": 'DISLIKE'}]
         }
+
         json_payload = json.dumps(payload)
 
         endpoint_url = reverse('get_recommendations')
 
         response = self.client.post(endpoint_url, data=json_payload, content_type='application/json')
 
-        print(response.content)
-
         self.assertEqual(response.status_code, 200)
 
         response_data = json.loads(response.content)
 
         self.assertIn('recommendations', response_data)
+        print(response_data)
+        self.assertEqual(len(response_data['recommendations']), 1)  # Adjust based on your expected result
 
 
 class PdfInfoExtractionTestCase(TestCase):
