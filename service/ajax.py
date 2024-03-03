@@ -33,6 +33,8 @@ def get_recommendations(request):
             liked_books = list(filter(lambda ub: 'LIKE' in user_reaction, all_books))
             disliked_books = list(filter(lambda ub: 'DISLIKE' in user_reaction, all_books))
 
+            author_from_user_book = book_author.split(",")[0]
+
             similar_books = [
                 {
                     "id": book.get("id"),
@@ -49,14 +51,15 @@ def get_recommendations(request):
                     and book.get("category", {}).get("id") in liked_categories
                     and (
                         book.get('category', {}).get('id') == user_category.get('id')
-                        or book.get('author') == book_author
+                        or book.get('author') == author_from_user_book
                     )
                 )
             ]
 
             disliked_liked_books = [
                 book for book in disliked_books
-                if book.get('author') == book_author and book.get('category', {}).get('id') not in disliked_categories
+                if book.get('author') == author_from_user_book and book.get('category', {}).get('id') not
+                in disliked_categories
             ]
 
             recommendations.extend(similar_books)
